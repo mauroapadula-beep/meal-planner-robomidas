@@ -1,18 +1,31 @@
-export default function Home() {
+import { supabase } from '../lib/supabase'
+
+export default async function Home() {
+  const { data, error } = await supabase
+    .from('weekly_plan')
+    .select('*')
+
   return (
     <div style={{ padding: 40 }}>
       <h1>🍽️ Meal Planner</h1>
 
-      <p>Your web app is now running 🚀</p>
+      <h2>Supabase Connection Test</h2>
 
-      <h2>Initial features:</h2>
+      {error ? (
+        <div>
+          <p>❌ Connection failed</p>
 
-      <ul>
-        <li>✅ Weekly planning</li>
-        <li>✅ Shopping list</li>
-        <li>✅ Stock management</li>
-        <li>✅ Cook mode</li>
-      </ul>
+          <pre>{JSON.stringify(error, null, 2)}</pre>
+        </div>
+      ) : (
+        <div>
+          <p>✅ Database connected successfully</p>
+
+          <pre>
+            {JSON.stringify(data, null, 2)}
+          </pre>
+        </div>
+      )}
     </div>
   )
 }
