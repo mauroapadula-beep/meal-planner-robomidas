@@ -2,34 +2,10 @@
 
 import { useState } from 'react'
 
+import { weeklyPlan as initialPlan } from '../../data/meals'
+
 export default function PlanPage() {
-  const [weeklyPlan, setWeeklyPlan] = useState([
-    {
-      day: 'Monday',
-      lunch: 'Grilled Chicken + Rice',
-      dinner: 'Pumpkin Soup',
-    },
-    {
-      day: 'Tuesday',
-      lunch: 'Fish + Vegetables',
-      dinner: 'Pasta Bolognese',
-    },
-    {
-      day: 'Wednesday',
-      lunch: 'Beef + Sweet Potato',
-      dinner: 'Lentil Stew',
-    },
-    {
-      day: 'Thursday',
-      lunch: 'Chicken Salad',
-      dinner: 'Vegetable Omelette',
-    },
-    {
-      day: 'Friday',
-      lunch: 'Rice Bowl',
-      dinner: 'Homemade Pizza',
-    },
-  ])
+  const [weeklyPlan, setWeeklyPlan] = useState(initialPlan)
 
   const updateMeal = (index, field, value) => {
     const updatedPlan = [...weeklyPlan]
@@ -56,7 +32,9 @@ export default function PlanPage() {
         <thead>
           <tr>
             <th style={styles.th}>Day</th>
+
             <th style={styles.th}>Lunch</th>
+
             <th style={styles.th}>Dinner</th>
           </tr>
         </thead>
