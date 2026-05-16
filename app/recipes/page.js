@@ -1,29 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+import { supabase } from "../lib/supabase";
 
 export default function RecipesPage() {
   const [recipes, setRecipes] = useState([]);
 
   const [form, setForm] = useState({
     name: "",
-    category: "",
+    difficulty: "",
     calories: "",
     prep_time: "",
     cook_time: "",
     servings: "",
-    protein_type: "",
+    ingredients: "",
   });
-
-  useEffect(() => {
-    fetchRecipes();
-  }, []);
 
   async function fetchRecipes() {
     const { data, error } = await supabase
@@ -36,60 +27,71 @@ export default function RecipesPage() {
     }
   }
 
-  async function createRecipe() {
-    const { error } = await supabase
-      .from("recipes")
-      .insert([form]);
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    const { error } = await supabase.from("recipes").insert([
+      {
+        name: form.name,
+        difficulty: form.difficulty,
+        calories: Number(form.calories),
+        prep_time: Number(form.prep_time),
+        cook_time: Number(form.cook_time),
+        servings: Number(form.servings),
+        ingredients: form.ingredients,
+      },
+    ]);
 
     if (error) {
-      alert("Error creating recipe");
-      console.error(error);
-      return;
+      alert(error.message);
+    } else {
+      alert("Recipe created successfully");
+
+      setForm({
+        name: "",
+        difficulty: "",
+        calories: "",
+        prep_time: "",
+        cook_time: "",
+        servings: "",
+        ingredients: "",
+      });
+
+      fetchRecipes();
     }
-
-    setForm({
-      name: "",
-      category: "",
-      calories: "",
-      prep_time: "",
-      cook_time: "",
-      servings: "",
-      protein_type: "",
-    });
-
-    fetchRecipes();
   }
 
   return (
-    <main style={{ padding: 40, maxWidth: 800 }}>
-      <h1>🍽 Recipes</h1>
+    <div style={{ padding: "40px", maxWidth: "900px" }}>
+      <h1>Create Recipe</h1>
 
-      <div
+      <form
+        onSubmit={handleSubmit}
         style={{
-          border: "1px solid #ccc",
-          padding: 20,
-          borderRadius: 10,
-          marginBottom: 40,
+          display: "flex",
+          flexDirection: "column",
+          gap: "15px",
+          marginBottom: "50px",
         }}
       >
-        <h2>Create Recipe</h2>
-
         <input
           placeholder="Recipe name"
           value={form.name}
           onChange={(e) =>
             setForm({ ...form, name: e.target.value })
           }
-          style={inputStyle}
         />
 
         <input
-          placeholder="Category"
-          value={form.category}
+          placeholder="Difficulty"
+          value={form.difficulty}
           onChange={(e) =>
-            setForm({ ...form, category: e.target.value })
+            setForm({ ...form, difficulty: e.target.value })
           }
-          style={inputStyle}
         />
 
         <input
@@ -98,7 +100,6 @@ export default function RecipesPage() {
           onChange={(e) =>
             setForm({ ...form, calories: e.target.value })
           }
-          style={inputStyle}
         />
 
         <input
@@ -107,7 +108,6 @@ export default function RecipesPage() {
           onChange={(e) =>
             setForm({ ...form, prep_time: e.target.value })
           }
-          style={inputStyle}
         />
 
         <input
@@ -116,7 +116,6 @@ export default function RecipesPage() {
           onChange={(e) =>
             setForm({ ...form, cook_time: e.target.value })
           }
-          style={inputStyle}
         />
 
         <input
@@ -125,71 +124,72 @@ export default function RecipesPage() {
           onChange={(e) =>
             setForm({ ...form, servings: e.target.value })
           }
-          style={inputStyle}
         />
 
-        <input
-          placeholder="Protein type"
-          value={form.protein_type}
+        <textarea
+          placeholder="Ingredients"
+          value={form.ingredients}
           onChange={(e) =>
-            setForm({
-              ...form,
-              protein_type: e.target.value,
-            })
+            setForm({ ...form, ingredients: e.target.value })
           }
-          style={inputStyle}
         />
 
-        <button
-          onClick={createRecipe}
-          style={{
-            padding: 12,
-            background: "black",
-            color: "white",
-            border: "none",
-            borderRadius: 8,
-            cursor: "pointer",
-            marginTop: 10,
-          }}
-        >
+        <button type="submit">
           Save Recipe
         </button>
-      </div>
+      </form>
 
-      <h2>Recipe List</h2>
+      <h2>Saved Recipes</h2>
 
-      {recipes.length === 0 ? (
-        <p>No recipes yet</p>
-      ) : (
-        recipes.map((recipe) => (
+      <div
+        style={{
+          display: "grid",
+          gap: "20px",
+        }}
+      >
+        {recipes.map((recipe) => (
           <div
             key={recipe.id}
             style={{
               border: "1px solid #ccc",
-              padding: 20,
-              marginBottom: 20,
-              borderRadius: 10,
+              padding: "20px",
+              borderRadius: "12px",
             }}
           >
             <h3>{recipe.name}</h3>
 
-            <p>Category: {recipe.category}</p>
-            <p>Calories: {recipe.calories}</p>
-            <p>Prep Time: {recipe.prep_time} min</p>
-            <p>Cook Time: {recipe.cook_time} min</p>
-            <p>Servings: {recipe.servings}</p>
-            <p>Protein: {recipe.protein_type}</p>
+            <p>
+              <strong>Difficulty:</strong>{" "}
+              {recipe.difficulty}
+            </p>
+
+            <p>
+              <strong>Calories:</strong>{" "}
+              {recipe.calories}
+            </p>
+
+            <p>
+              <strong>Prep Time:</strong>{" "}
+              {recipe.prep_time} min
+            </p>
+
+            <p>
+              <strong>Cook Time:</strong>{" "}
+              {recipe.cook_time} min
+            </p>
+
+            <p>
+              <strong>Servings:</strong>{" "}
+              {recipe.servings}
+            </p>
+
+            <p>
+              <strong>Ingredients:</strong>{" "}
+              {recipe.ingredients}
+            </p>
           </div>
-        ))
-      )}
-    </main>
+        ))}
+      </div>
+    </div>
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  padding: 12,
-  marginBottom: 10,
-  borderRadius: 8,
-  border: "1px solid #ccc",
-};
