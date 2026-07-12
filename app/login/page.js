@@ -7,13 +7,7 @@ import { supabase } from '../../lib/supabase'
 export default function LoginPage() {
   const router = useRouter()
 
-  const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost'
-
-  useEffect(() => {
-    if (isLocalhost) router.replace('/')
-  }, [])
-
-  if (isLocalhost) return null
+  const [isLocalhost, setIsLocalhost] = useState(false)
   const [mode, setMode] = useState('login') // 'login' | 'signup'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -21,6 +15,15 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [successMsg, setSuccessMsg] = useState('')
+
+  useEffect(() => {
+    if (window.location.hostname === 'localhost') {
+      setIsLocalhost(true)
+      router.replace('/')
+    }
+  }, [])
+
+  if (isLocalhost) return null
 
   async function handleSubmit(e) {
     e.preventDefault()
