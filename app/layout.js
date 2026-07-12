@@ -1,40 +1,15 @@
-import Link from 'next/link'
+import NavBar from './components/NavBar'
 
 export const metadata = {
-  title: 'Meal Planner',
-  description: 'Meal planning web app',
+  title: 'Meal Planner · Robomidas',
+  description: 'Sistema de planificación de comidas y tareas del hogar',
 }
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        style={{
-          margin: 0,
-          fontFamily: 'Arial',
-          backgroundColor: '#f5f5f5',
-        }}
-      >
-        <nav
-          style={{
-            display: 'flex',
-            gap: 20,
-            padding: 20,
-            backgroundColor: 'white',
-            borderBottom: '1px solid #ddd',
-          }}
-        >
-          <Link href="/">Home</Link>
-
-          <Link href="/plan">Plan</Link>
-
-          <Link href="/shopping">Shopping</Link>
-
-          <Link href="/stock">Stock</Link>
-
-          <Link href="/cook">Cook</Link>
-        </nav>
-
+    <html lang="es">
+      <body style={{ margin: 0, fontFamily: 'sans-serif', backgroundColor: '#f8fafc' }}>
+        <NavBar />
         <main>{children}</main>
       </body>
     </html>
